@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="NGOEventsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="eventsTable">
+          <Key>
+            <PropertyRef Name="eventID" />
+          </Key>
+          <Property Name="eventDescription" Type="varchar(max)" Nullable="false" />
+          <Property Name="eventCategory" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="eventStartDate" Type="date" Nullable="false" />
+          <Property Name="eventEndDate" Type="date" Nullable="false" />
+          <Property Name="eventStartTime" Type="time" Precision="7" Nullable="false" />
+          <Property Name="eventEndTime" Type="time" Precision="7" Nullable="false" />
+          <Property Name="registration" Type="bit" Nullable="false" />
+          <Property Name="adultPrice" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="childPrice" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="eventID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="image" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="tickets">
+          <Key>
+            <PropertyRef Name="ticketID" />
+          </Key>
+          <Property Name="buyerPhone" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="buyerAddress" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="totalAdult" Type="int" Nullable="false" />
+          <Property Name="totalChildren" Type="int" Nullable="false" />
+          <Property Name="ticketID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" Nullable="false" />
+          <Property Name="eventID" Type="int" Nullable="false" />
+          <Property Name="totalPrice" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="firstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="lastName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="email" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="role" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_tickets_events">
+          <End Role="eventsTable" Type="Self.eventsTable" Multiplicity="1" />
+          <End Role="tickets" Type="Self.tickets" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="eventsTable">
+              <PropertyRef Name="eventID" />
+            </Principal>
+            <Dependent Role="tickets">
+              <PropertyRef Name="eventID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tickets_users">
+          <End Role="users" Type="Self.users" Multiplicity="1" />
+          <End Role="tickets" Type="Self.tickets" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="tickets">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="NGOEventsModelStoreContainer">
+          <EntitySet Name="eventsTable" EntityType="Self.eventsTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tickets" EntityType="Self.tickets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tickets_events" Association="Self.FK_tickets_events">
+            <End Role="eventsTable" EntitySet="eventsTable" />
+            <End Role="tickets" EntitySet="tickets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tickets_users" Association="Self.FK_tickets_users">
+            <End Role="users" EntitySet="users" />
+            <End Role="tickets" EntitySet="tickets" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NGOEventsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="firstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="lastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="role" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="tickets" Relationship="NGOEventsModel.FK_tickets_users" FromRole="user" ToRole="ticket" />
+        </EntityType>
+        <EntityContainer Name="NGOEventsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="users" EntityType="Self.user" />
+          <EntitySet Name="eventsTables" EntityType="NGOEventsModel.eventsTable" />
+          <EntitySet Name="tickets" EntityType="NGOEventsModel.ticket" />
+          <AssociationSet Name="FK_tickets_events" Association="NGOEventsModel.FK_tickets_events">
+            <End Role="eventsTable" EntitySet="eventsTables" />
+            <End Role="ticket" EntitySet="tickets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tickets_users" Association="NGOEventsModel.FK_tickets_users">
+            <End Role="user" EntitySet="users" />
+            <End Role="ticket" EntitySet="tickets" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="eventsTable">
+          <Key>
+            <PropertyRef Name="eventID" />
+          </Key>
+          <Property Name="eventDescription" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="eventCategory" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="eventStartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="eventEndDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="eventStartTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="eventEndTime" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="registration" Type="Boolean" Nullable="false" />
+          <Property Name="adultPrice" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="childPrice" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="eventID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tickets" Relationship="NGOEventsModel.FK_tickets_events" FromRole="eventsTable" ToRole="ticket" />
+        </EntityType>
+        <EntityType Name="ticket">
+          <Key>
+            <PropertyRef Name="ticketID" />
+          </Key>
+          <Property Name="buyerPhone" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="buyerAddress" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="totalAdult" Type="Int32" Nullable="false" />
+          <Property Name="totalChildren" Type="Int32" Nullable="false" />
+          <Property Name="ticketID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="eventID" Type="Int32" Nullable="false" />
+          <Property Name="totalPrice" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="eventsTable" Relationship="NGOEventsModel.FK_tickets_events" FromRole="ticket" ToRole="eventsTable" />
+          <NavigationProperty Name="user" Relationship="NGOEventsModel.FK_tickets_users" FromRole="ticket" ToRole="user" />
+        </EntityType>
+        <Association Name="FK_tickets_events">
+          <End Type="NGOEventsModel.eventsTable" Role="eventsTable" Multiplicity="1" />
+          <End Type="NGOEventsModel.ticket" Role="ticket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="eventsTable">
+              <PropertyRef Name="eventID" />
+            </Principal>
+            <Dependent Role="ticket">
+              <PropertyRef Name="eventID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tickets_users">
+          <End Type="NGOEventsModel.user" Role="user" Multiplicity="1" />
+          <End Type="NGOEventsModel.ticket" Role="ticket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="ticket">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NGOEventsModelStoreContainer" CdmEntityContainer="NGOEventsEntities">
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="NGOEventsModel.user">
+              <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="firstName" ColumnName="firstName" />
+                <ScalarProperty Name="lastName" ColumnName="lastName" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="role" ColumnName="role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="eventsTables">
+            <EntityTypeMapping TypeName="NGOEventsModel.eventsTable">
+              <MappingFragment StoreEntitySet="eventsTable">
+                <ScalarProperty Name="image" ColumnName="image" />
+                <ScalarProperty Name="eventID" ColumnName="eventID" />
+                <ScalarProperty Name="childPrice" ColumnName="childPrice" />
+                <ScalarProperty Name="adultPrice" ColumnName="adultPrice" />
+                <ScalarProperty Name="registration" ColumnName="registration" />
+                <ScalarProperty Name="eventEndTime" ColumnName="eventEndTime" />
+                <ScalarProperty Name="eventStartTime" ColumnName="eventStartTime" />
+                <ScalarProperty Name="eventEndDate" ColumnName="eventEndDate" />
+                <ScalarProperty Name="eventStartDate" ColumnName="eventStartDate" />
+                <ScalarProperty Name="eventCategory" ColumnName="eventCategory" />
+                <ScalarProperty Name="eventDescription" ColumnName="eventDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tickets">
+            <EntityTypeMapping TypeName="NGOEventsModel.ticket">
+              <MappingFragment StoreEntitySet="tickets">
+                <ScalarProperty Name="totalPrice" ColumnName="totalPrice" />
+                <ScalarProperty Name="eventID" ColumnName="eventID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="ticketID" ColumnName="ticketID" />
+                <ScalarProperty Name="totalChildren" ColumnName="totalChildren" />
+                <ScalarProperty Name="totalAdult" ColumnName="totalAdult" />
+                <ScalarProperty Name="buyerAddress" ColumnName="buyerAddress" />
+                <ScalarProperty Name="buyerPhone" ColumnName="buyerPhone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
